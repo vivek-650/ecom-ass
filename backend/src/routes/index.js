@@ -1,20 +1,14 @@
 import { Router } from 'express';
-import authRoutes from '../modules/auth/auth.routes.js';
-import productRoutes from '../modules/products/products.routes.js';
-import cartRoutes from '../modules/cart/cart.routes.js';
-import wishlistRoutes from '../modules/wishlist/wishlist.routes.js';
-import orderRoutes from '../modules/orders/orders.routes.js';
-import userRoutes from '../modules/users/users.routes.js';
+import v1Routes from './v1/index.js';
 
 const router = Router();
 
+// Health checks are conventionally left unversioned — infra (Render, uptime
+// monitors, load balancer probes) shouldn't need to know the API version.
 router.get('/health', (_req, res) => res.json({ success: true, message: 'Lumos Market API is running' }));
 
-router.use('/auth', authRoutes);
-router.use('/products', productRoutes);
-router.use('/cart', cartRoutes);
-router.use('/wishlist', wishlistRoutes);
-router.use('/orders', orderRoutes);
-router.use('/users', userRoutes);
+// A future breaking change ships as routes/v2/index.js mounted alongside
+// this, so existing clients on /api/v1 keep working unmodified.
+router.use('/v1', v1Routes);
 
 export default router;
