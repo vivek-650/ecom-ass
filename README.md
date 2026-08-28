@@ -18,19 +18,20 @@ ecom/
 | -------------- | ----------------------------------------------------------------------- |
 | Frontend       | React 18 + TypeScript + Vite, Tailwind CSS, React Router, TanStack Query |
 | Backend        | Node.js + Express (ESM)                                                 |
-| Database       | Supabase (Postgres)                                                     |
-| Auth           | Supabase Auth (email/password) — hashing & sessions handled by Supabase |
+| Database       | Supabase (Postgres) — used as a plain Postgres database, not for Auth   |
+| Auth           | Hand-rolled: bcrypt password hashing + our own signed JWTs, issued by the Express backend |
 | Image storage  | Cloudinary                                                               |
 | Payments       | Razorpay (test mode)                                                    |
 | Deployment     | Render (backend) + Vercel (frontend)                                    |
 
-**Why Supabase Auth, not hand-rolled JWT?** Supabase Auth already gives secure password
-hashing and signed, refreshable sessions — reimplementing that with bcrypt + custom JWTs
-would just be duplicating a solved problem with more attack surface. The frontend talks to
-Supabase directly for sign up / sign in / sign out; every other request carries the
-resulting access token to the Express API, which verifies it and loads the caller's role
-from the `profiles` table before any route logic runs. See
-[`backend/src/middleware/auth.middleware.js`](backend/src/middleware/auth.middleware.js) and
+**Why our own auth, not Supabase Auth?** Registration and login are fully self-contained in
+this backend: `POST /auth/register` hashes the password with bcrypt and inserts a `profiles`
+row directly; `POST /auth/login` verifies the hash and signs our own JWT (`{ sub, role }`,
+7-day expiry). The frontend never talks to any auth provider directly — it stores the JWT
+and sends it as `Authorization: Bearer <token>` on every request, which `requireAuth` verifies
+and uses to load the caller's role from `profiles` before any route logic runs. See
+[`backend/src/modules/auth/auth.service.js`](backend/src/modules/auth/auth.service.js),
+[`backend/src/middleware/auth.middleware.js`](backend/src/middleware/auth.middleware.js), and
 [`backend/src/middleware/role.middleware.js`](backend/src/middleware/role.middleware.js).
 
 ## 2. Local setup
@@ -42,27 +43,28 @@ from the `profiles` table before any route logic runs. See
 - A [Razorpay](https://razorpay.com) account (test mode keys)
 
 ### 2.1 Database
+Supabase is used here purely as a hosted Postgres database — its Auth product is not used
+anywhere in this app.
 1. Create a new Supabase project.
 2. Open the SQL editor and run [`supabase/schema.sql`](supabase/schema.sql) once — it creates
-   the `profiles`, `products`, `cart_items`, `wishlist_items`, `orders`, and `order_items`
-   tables, the `role` enum, RLS policies, and a trigger that auto-creates a `profiles` row
-   whenever someone signs up via Supabase Auth.
-3. In **Authentication → Providers**, keep Email enabled. For local testing, you can disable
-   "Confirm email" under **Authentication → Settings** so freshly-registered accounts can log
-   in immediately.
+   the `profiles` (with `password_hash`), `products`, `cart_items`, `wishlist_items`, `orders`,
+   `order_items`, and `idempotency_keys` tables, plus the `role` enum and RLS (enabled with no
+   policies — the Express backend is the only client, always via the service-role key).
 
 ### 2.2 Backend
 ```bash
 cd backend
-cp .env.example .env      # fill in Supabase / Cloudinary / Razorpay values
+cp .env.example .env      # fill in Supabase / Cloudinary / Razorpay / JWT_SECRET values
 npm install
 npm run dev                # starts on http://localhost:5000
 ```
+Generate `JWT_SECRET` with `openssl rand -hex 32` (or any long random string) — it signs the
+app's own session tokens and must stay secret.
 
 ### 2.3 Frontend
 ```bash
 cd frontend
-cp .env.example .env      # fill in Supabase URL/anon key + API base URL
+cp .env.example .env      # set the API base URL
 npm install
 npm run dev                # starts on http://localhost:5173
 ```
@@ -82,15 +84,17 @@ See [`backend/.env.example`](backend/.env.example) and
 
 ## 4. Test credentials
 
-This repo ships with no seeded accounts (there's no live database bundled with the code).
-After running the setup above, create one account per role — a `user`, a `sales_person` via
-the register page, and an `admin` via the bootstrap step — and record them here for graders:
+One account per role, seeded against the dev database for grading:
 
-| Role         | Email                | Password    |
-| ------------ | --------------------- | ----------- |
-| Admin        | admin@example.com     | *(set your own)* |
-| Sales Person | sales@example.com     | *(set your own)* |
-| User         | user@example.com      | *(set your own)* |
+| Role         | Email              | Password          |
+| ------------ | ------------------ | ------------------ |
+| Admin        | admin@lumos.test   | LumosAdmin123!      |
+| Sales Person | sales@lumos.test   | LumosSales123!      |
+| User         | user@lumos.test    | LumosUser123!       |
+
+If you point this at a fresh database instead, these won't exist — register a `user` and a
+`sales_person` via the register page, then promote one account to `admin` via
+[`supabase/seed.sql`](supabase/seed.sql) (see 2.4 above).
 
 ## 5. Roles & permission boundary
 
@@ -112,7 +116,7 @@ boundary.
 
 | Feature | Implementation |
 | --- | --- |
-| **Authentication** | Supabase Auth (email/password) on the frontend; backend verifies the Supabase access token and loads the caller's `profiles` row on every request. |
+| **Authentication** | Hand-rolled: bcrypt-hashed passwords in `profiles`, our own signed JWT issued on login, verified by `requireAuth` on every protected request. |
 | **Role-based access** | `role` enum on `profiles`; Express `restrictTo(...)` middleware gates every mutating route. Product ownership is additionally checked in the service layer so a Sales Person can only touch their own listings. |
 | **Product CRUD** | Public search/filter/paginate on `GET /products`; Admin/Sales Person can create/update/delete, with ownership enforced server-side. Images upload straight to Cloudinary via an in-memory `multer` buffer stream — the raw file never touches disk, and only the returned `secure_url` is persisted. |
 | **Search & filters** | Keyword (`ilike` on name), category, and price range, all as query params, debounced client-side. |
