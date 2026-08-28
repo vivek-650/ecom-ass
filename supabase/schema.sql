@@ -124,6 +124,28 @@ create index idx_order_items_order on order_items (order_id);
 create index idx_order_items_seller on order_items (seller_id);
 
 -- ---------------------------------------------------------------------
+-- 7. idempotency_keys — backs the Idempotency-Key middleware
+--    (backend/src/middleware/idempotency.middleware.js). A client retrying
+--    a checkout request after a timeout/network blip replays the first
+--    response instead of creating a second Razorpay order.
+-- ---------------------------------------------------------------------
+create table idempotency_keys (
+  id                uuid primary key default gen_random_uuid(),
+  idempotency_key   text not null,
+  user_id           uuid not null references profiles (id) on delete cascade,
+  method            text not null,
+  path              text not null,
+  request_hash      text not null,
+  status            text not null default 'processing' check (status in ('processing', 'completed')),
+  response_status   integer,
+  response_body     jsonb,
+  created_at        timestamptz not null default now(),
+  unique (idempotency_key, user_id, method, path)
+);
+
+create index idx_idempotency_lookup on idempotency_keys (idempotency_key, user_id, method, path);
+
+-- ---------------------------------------------------------------------
 -- Row Level Security
 -- The Express backend talks to Supabase with the service_role key, which
 -- bypasses RLS by design — all authorization is enforced in Express
@@ -138,6 +160,7 @@ alter table cart_items enable row level security;
 alter table wishlist_items enable row level security;
 alter table orders enable row level security;
 alter table order_items enable row level security;
+alter table idempotency_keys enable row level security;
 
 create policy "profiles are self-readable" on profiles
   for select using (auth.uid() = id);

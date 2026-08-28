@@ -20,7 +20,9 @@ export function useSalesStats() {
 export function useCheckout() {
   const queryClient = useQueryClient();
 
-  const createRazorpayOrder = useMutation({ mutationFn: ordersApi.createRazorpayOrder });
+  const createRazorpayOrder = useMutation({
+    mutationFn: (idempotencyKey: string) => ordersApi.createRazorpayOrder(idempotencyKey),
+  });
 
   const verifyPayment = useMutation({
     mutationFn: ordersApi.verifyPayment,

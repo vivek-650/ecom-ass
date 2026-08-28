@@ -103,7 +103,7 @@ the register page, and an `admin` via the bootstrap step — and record them her
 Every restriction above is enforced in Express middleware
 ([`requireAuth`](backend/src/middleware/auth.middleware.js) +
 [`restrictTo`](backend/src/middleware/role.middleware.js)), not just hidden in the UI — a
-Sales Person calling `DELETE /api/products/:id` on another seller's product gets a `403`
+Sales Person calling `DELETE /api/v1/products/:id` on another seller's product gets a `403`
 regardless of what the frontend renders. The frontend's [`RoleRoute`](frontend/src/routes/RoleRoute.tsx)
 only exists so the wrong role never sees a button it can't use — it is UX, not the security
 boundary.
@@ -121,6 +121,9 @@ boundary.
 | **Razorpay checkout** | Two-step flow: `POST /orders/razorpay` snapshots the cart into a pending `orders` + `order_items` row and opens a Razorpay order; `POST /orders/verify` recomputes the HMAC-SHA256 signature server-side before marking the order paid, decrementing stock, and clearing the cart. A forged success callback without a valid signature is rejected with 400 and the order is marked `failed`. |
 | **Order history & dashboards** | Users see their own paid orders; Sales Person sees orders containing their products (joined via a denormalised `seller_id` on `order_items`); Admin sees every order plus a stats tab (total sales, orders, products, users). |
 | **Deployment** | Backend on Render (see `render.yaml`), frontend on Vercel (`vercel.json` handles SPA routing). |
+| **API versioning** | All routes live under `/api/v1` (health check stays unversioned at `/api/health`). A breaking change ships as `routes/v2/` mounted alongside `v1` — existing clients on `/api/v1` never break. |
+| **Structured logging** | `pino` + `pino-http` replace `morgan`: JSON logs in production (ready for a log aggregator), pretty-printed in dev. Every request gets a correlation id (`X-Request-Id`), and the error middleware logs the full stack server-side via the request-scoped logger while returning a clean message to the client. Auth headers, cookies, and payment signatures are redacted from logs. |
+| **Idempotent checkout** | `POST /orders/razorpay` requires an `Idempotency-Key` header (Stripe/Razorpay-style). A retried request with the same key replays the original response instead of snapshotting the cart into a second pending order — see `backend/src/middleware/idempotency.middleware.js`. |
 
 ## 7. Deployment
 
@@ -134,7 +137,7 @@ boundary.
 1. Import this repo, set **Root Directory** to `frontend`.
 2. Framework preset: Vite. Build command: `npm run build`. Output directory: `dist`.
 3. Add the variables from `frontend/.env.example`, pointing `VITE_API_BASE_URL` at your live
-   Render URL (`https://<your-service>.onrender.com/api`).
+   Render URL (`https://<your-service>.onrender.com/api/v1`).
 4. Redeploy the backend once you know the final Vercel URL so `CLIENT_ORIGIN` (CORS) matches.
 
 ### Live URLs

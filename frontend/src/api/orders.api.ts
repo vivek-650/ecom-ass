@@ -16,7 +16,14 @@ export interface VerifyPaymentPayload {
 }
 
 export const ordersApi = {
-  createRazorpayOrder: () => unwrap<RazorpayOrderResponse>(axiosClient.post('/orders/razorpay')),
+  // idempotencyKey should be freshly generated once per checkout *attempt*
+  // (not per click/retry) — see useCheckout, which mints one and reuses it
+  // across retries of the same attempt so a network blip can't double-create
+  // the order.
+  createRazorpayOrder: (idempotencyKey: string) =>
+    unwrap<RazorpayOrderResponse>(
+      axiosClient.post('/orders/razorpay', null, { headers: { 'Idempotency-Key': idempotencyKey } })
+    ),
   verifyPayment: (payload: VerifyPaymentPayload) => unwrap<Order>(axiosClient.post('/orders/verify', payload)),
   mine: () => unwrap<Order[]>(axiosClient.get('/orders/mine')),
   sellerOrders: () => unwrap<SellerOrderItem[]>(axiosClient.get('/orders/seller')),

@@ -22,7 +22,11 @@ export function CartPage() {
   const handleCheckout = async () => {
     setIsCheckingOut(true);
     try {
-      const razorpayOrder = await createRazorpayOrder.mutateAsync();
+      // Minted once per checkout attempt — the Checkout button is disabled
+      // while isCheckingOut is true, so this also guards against a
+      // double-click firing two requests off the same click.
+      const idempotencyKey = crypto.randomUUID();
+      const razorpayOrder = await createRazorpayOrder.mutateAsync(idempotencyKey);
       openRazorpayCheckout({
         key: razorpayOrder.keyId,
         amount: razorpayOrder.amount,
