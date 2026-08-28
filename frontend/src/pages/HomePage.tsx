@@ -4,8 +4,8 @@ import { ProductGrid } from '@/components/product/ProductGrid';
 
 const PROMOS = [
   { title: 'New arrivals', sub: 'Freshly listed this week', tone: 'bg-gold text-ink', href: '/products' },
-  { title: 'Top picks', sub: 'Loved by shoppers', tone: 'bg-forest text-white', href: '/products' },
   { title: 'Sell on Lumos', sub: 'List your first product', tone: 'bg-ink text-white', href: '/register' },
+  { title: 'Top picks', sub: 'Loved by shoppers', tone: 'bg-gold-pale text-ink border border-gold-deep/30', href: '/products' },
 ];
 
 export function HomePage() {

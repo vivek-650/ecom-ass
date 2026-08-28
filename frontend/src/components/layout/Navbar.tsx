@@ -73,7 +73,7 @@ export function Navbar() {
             >
               <BagIcon />
               {cartCount > 0 && (
-                <span className="absolute right-0.5 top-0.5 grid h-4 w-4 place-items-center rounded-full bg-forest text-[9px] font-bold text-white">
+                <span className="absolute right-0.5 top-0.5 grid h-4 w-4 place-items-center rounded-full bg-ink text-[9px] font-bold text-white">
                   {cartCount}
                 </span>
               )}
@@ -142,7 +142,7 @@ export function Navbar() {
               </div>
             ) : (
               <Link to="/login">
-                <span className="rounded-md bg-forest px-4 py-2 text-sm font-semibold text-white hover:bg-forest-deep">
+                <span className="rounded-md bg-gold px-4 py-2 text-sm font-semibold text-ink hover:bg-gold-deep">
                   Login
                 </span>
               </Link>
