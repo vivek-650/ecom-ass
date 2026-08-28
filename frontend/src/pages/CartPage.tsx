@@ -94,7 +94,7 @@ export function CartPage() {
                   <p className="price mt-1 text-sm text-ink-muted">{formatCurrency(item.product.price)}</p>
                 </div>
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center rounded-full border border-ink/15">
+                  <div className="flex items-center rounded-md border border-ink/15">
                     <button
                       onClick={() => updateQuantity.mutate({ itemId: item.id, quantity: Math.max(1, item.quantity - 1) })}
                       className="grid h-9 w-9 place-items-center text-ink-muted hover:text-ink"

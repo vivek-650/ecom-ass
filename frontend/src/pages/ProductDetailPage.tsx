@@ -59,7 +59,7 @@ export function ProductDetailPage() {
           </div>
 
           <div className="mt-8 flex items-center gap-3">
-            <div className="flex items-center rounded-full border border-ink/15">
+            <div className="flex items-center rounded-md border border-ink/15">
               <button
                 onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                 className="grid h-11 w-11 place-items-center text-ink-muted hover:text-ink"

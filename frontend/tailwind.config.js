@@ -5,45 +5,47 @@ export default {
     extend: {
       colors: {
         ink: {
-          DEFAULT: '#14110F',
-          soft: '#221D19',
-          muted: '#5C554D',
+          DEFAULT: '#1A1A1A',
+          soft: '#2B2B2B',
+          muted: '#6B7280',
         },
         paper: {
-          DEFAULT: '#FBF8F2',
-          dim: '#F2ECDF',
+          DEFAULT: '#FFFFFF',
+          dim: '#F1F3F6',
         },
+        // Brand yellow -- highlights, promo surfaces, the account pill.
         gold: {
-          DEFAULT: '#C9A15A',
-          deep: '#9C7A3C',
-          pale: '#E8D6AE',
+          DEFAULT: '#FFC300',
+          deep: '#E0A800',
+          pale: '#FFF3CC',
         },
+        // Brand green -- primary CTA ("ADD"), success states.
         forest: {
-          DEFAULT: '#1F3A34',
-          deep: '#132724',
+          DEFAULT: '#0C9942',
+          deep: '#087A34',
+          pale: '#E3F8EA',
         },
-        ember: '#B65C43',
+        // Sale / discount tags.
+        ember: '#E23744',
       },
       fontFamily: {
-        display: ['"Fraunces"', 'ui-serif', 'Georgia', 'serif'],
+        display: ['"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         sans: ['"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace'],
+        mono: ['"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
-        glow: '0 0 120px 40px rgba(201, 161, 90, 0.18)',
-        card: '0 1px 2px rgba(20, 17, 15, 0.06), 0 8px 24px -8px rgba(20, 17, 15, 0.12)',
-        'card-hover': '0 4px 8px rgba(20, 17, 15, 0.08), 0 16px 40px -12px rgba(20, 17, 15, 0.18)',
+        card: '0 1px 2px rgba(26, 26, 26, 0.06)',
+        'card-hover': '0 2px 10px rgba(26, 26, 26, 0.12)',
       },
       backgroundImage: {
-        'radial-glow':
-          'radial-gradient(circle at 50% 0%, rgba(201, 161, 90, 0.16), transparent 60%)',
+        'radial-glow': 'none',
       },
       letterSpacing: {
-        widest: '0.18em',
+        widest: '0.14em',
       },
       keyframes: {
         'fade-up': {
-          '0%': { opacity: 0, transform: 'translateY(12px)' },
+          '0%': { opacity: 0, transform: 'translateY(8px)' },
           '100%': { opacity: 1, transform: 'translateY(0)' },
         },
         shimmer: {
@@ -52,7 +54,7 @@ export default {
         },
       },
       animation: {
-        'fade-up': 'fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both',
+        'fade-up': 'fade-up 0.3s ease-out both',
         shimmer: 'shimmer 2s linear infinite',
       },
     },

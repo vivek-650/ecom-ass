@@ -8,34 +8,48 @@
   }
 
   body {
-    @apply bg-paper text-ink font-sans antialiased;
+    @apply bg-paper-dim text-ink font-sans antialiased;
   }
 
   ::selection {
-    @apply bg-gold/30 text-ink;
+    @apply bg-gold/40 text-ink;
   }
 
   *:focus-visible {
-    outline: 2px solid theme('colors.gold.DEFAULT');
+    outline: 2px solid theme('colors.forest.DEFAULT');
     outline-offset: 2px;
   }
 }
 
 @layer components {
   .container-lumos {
-    @apply mx-auto w-full max-w-7xl px-5 sm:px-8;
+    @apply mx-auto w-full max-w-[1248px] px-4 sm:px-6;
   }
 
   .eyebrow {
-    @apply font-mono text-[11px] uppercase tracking-widest text-ink-muted;
+    @apply text-[11px] font-semibold uppercase tracking-widest text-ink-muted;
   }
 
   .hairline {
-    @apply h-px w-full bg-gradient-to-r from-transparent via-gold/50 to-transparent;
+    @apply h-px w-full bg-ink/10;
   }
 
   .price {
-    @apply font-mono tabular-nums;
+    @apply font-sans font-bold tabular-nums text-ink;
+  }
+
+  /* Horizontal scroll-snap rail used by the promo banner strip and the
+     category chip row -- swipeable on touch, scrollable with a trackpad,
+     no JS carousel needed. */
+  .scroll-rail {
+    @apply flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth pb-1;
+    scrollbar-width: none;
+  }
+  .scroll-rail::-webkit-scrollbar {
+    display: none;
+  }
+  .scroll-rail > * {
+    @apply snap-start;
   }
 }
 
