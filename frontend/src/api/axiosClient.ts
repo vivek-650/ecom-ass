@@ -4,7 +4,9 @@ import type { ApiEnvelope } from '@/types';
 
 const baseURL = import.meta.env.VITE_API_BASE_URL as string;
 
-export const axiosClient = axios.create({ baseURL });
+// A hung upstream (e.g. the DB provider having a slow moment) should fail
+// fast with a clear error instead of leaving the UI spinning indefinitely.
+export const axiosClient = axios.create({ baseURL, timeout: 15_000 });
 
 // Every request rides on our own JWT (see utils/authToken.ts) — this is the
 // single place that attaches it, bridging login (POST /auth/login) to every
@@ -26,7 +28,10 @@ export class ApiRequestError extends Error {
 axiosClient.interceptors.response.use(
   (response) => response,
   (error: AxiosError<ApiEnvelope<null> & { message?: string }>) => {
-    const message = error.response?.data?.message || error.message || 'Something went wrong';
+    const message =
+      error.code === 'ECONNABORTED'
+        ? 'The server is taking too long to respond — please try again'
+        : error.response?.data?.message || error.message || 'Something went wrong';
     return Promise.reject(new ApiRequestError(message, error.response?.status));
   }
 );
