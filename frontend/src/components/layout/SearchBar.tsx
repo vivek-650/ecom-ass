@@ -66,7 +66,7 @@ export function SearchBar() {
   };
 
   return (
-    <div ref={containerRef} className="relative hidden max-w-xl flex-1 sm:block">
+    <div ref={containerRef} className="relative w-full">
       <div className="flex items-center rounded-md border border-ink/15 bg-paper-dim px-3 focus-within:border-forest focus-within:bg-white">
         <SearchIcon className="shrink-0 text-ink-muted" />
         <input

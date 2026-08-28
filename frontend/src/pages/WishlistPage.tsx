@@ -28,7 +28,7 @@ export function WishlistPage() {
 
   return (
     <div className="container-lumos py-12">
-      <h1 className="mb-10 font-display text-4xl text-ink">Your wishlist</h1>
+      <h1 className="mb-6 font-display text-2xl text-ink sm:mb-10 sm:text-4xl">Your wishlist</h1>
       <div className="grid grid-cols-2 gap-x-5 gap-y-10 sm:grid-cols-3 lg:grid-cols-4">
         {items.map((item) => (
           <div key={item.id} className="group">

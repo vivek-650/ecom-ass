@@ -74,7 +74,7 @@ export function ProductForm({
         />
       </div>
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <Input label="Price (₹)" type="number" min={0} step="0.01" required value={price} onChange={(e) => setPrice(e.target.value)} />
         <Input label="Stock" type="number" min={0} required value={stock} onChange={(e) => setStock(e.target.value)} />
         <Select label="Category" required value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>

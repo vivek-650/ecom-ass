@@ -76,34 +76,37 @@ export function CartPage() {
 
   return (
     <div className="container-lumos py-12">
-      <h1 className="mb-10 font-display text-4xl text-ink">Your cart</h1>
+      <h1 className="mb-6 font-display text-2xl text-ink sm:mb-10 sm:text-4xl">Your cart</h1>
 
-      <div className="grid gap-12 lg:grid-cols-3">
+      <div className="grid gap-8 lg:grid-cols-3 lg:gap-12">
         <div className="space-y-6 lg:col-span-2">
           {items.map((item) => (
-            <div key={item.id} className="flex gap-4 border-b border-ink/8 pb-6">
-              <div className="h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-paper-dim">
+            <div key={item.id} className="flex gap-3 border-b border-ink/8 pb-6 sm:gap-4">
+              <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-paper-dim sm:h-24 sm:w-24">
                 {item.product.image_url && (
                   <img src={item.product.image_url} alt={item.product.name} className="h-full w-full object-cover" />
                 )}
               </div>
-              <div className="flex flex-1 flex-col justify-between">
-                <div>
-                  <Link to={`/products/${item.product.id}`} className="font-display text-lg text-ink hover:text-forest-deep">
+              <div className="flex min-w-0 flex-1 flex-col justify-between">
+                <div className="min-w-0">
+                  <Link
+                    to={`/products/${item.product.id}`}
+                    className="line-clamp-2 font-display text-base text-ink hover:text-forest-deep sm:text-lg"
+                  >
                     {item.product.name}
                   </Link>
                   <p className="price mt-1 text-sm text-ink-muted">{formatCurrency(item.product.price)}</p>
                 </div>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center rounded-md border border-ink/15">
                     <button
                       onClick={() => updateQuantity.mutate({ itemId: item.id, quantity: Math.max(1, item.quantity - 1) })}
-                      className="grid h-9 w-9 place-items-center text-ink-muted hover:text-ink"
+                      className="grid h-8 w-8 place-items-center text-ink-muted hover:text-ink sm:h-9 sm:w-9"
                       aria-label="Decrease quantity"
                     >
                       <MinusIcon size={13} />
                     </button>
-                    <span className="w-8 text-center text-sm">{item.quantity}</span>
+                    <span className="w-7 text-center text-sm sm:w-8">{item.quantity}</span>
                     <button
                       onClick={() =>
                         updateQuantity.mutate({
@@ -111,7 +114,7 @@ export function CartPage() {
                           quantity: Math.min(item.product.stock, item.quantity + 1),
                         })
                       }
-                      className="grid h-9 w-9 place-items-center text-ink-muted hover:text-ink"
+                      className="grid h-8 w-8 place-items-center text-ink-muted hover:text-ink sm:h-9 sm:w-9"
                       aria-label="Increase quantity"
                     >
                       <PlusIcon size={13} />

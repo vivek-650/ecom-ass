@@ -48,7 +48,7 @@ export function ProductDetailPage() {
 
         <div className="flex flex-col">
           <Badge tone="neutral">{product.category}</Badge>
-          <h1 className="mt-4 font-display text-4xl leading-tight text-ink">{product.name}</h1>
+          <h1 className="mt-4 font-display text-2xl leading-tight text-ink sm:text-3xl lg:text-4xl">{product.name}</h1>
           <p className="price mt-4 text-2xl text-ink">{formatCurrency(product.price)}</p>
 
           <p className="mt-6 max-w-md text-sm leading-relaxed text-ink-muted">
@@ -59,19 +59,22 @@ export function ProductDetailPage() {
             {outOfStock ? 'Out of stock' : `${product.stock} in stock`}
           </div>
 
-          <div className="mt-8 flex items-center gap-3">
-            <div className="flex items-center rounded-md border border-ink/15">
+          {/* Stepper + wishlist share a row on mobile; the Add-to-cart button
+              takes its own full-width row below (there isn't room for all
+              three side by side under ~360px). From sm: up they're one row. */}
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <div className="order-1 flex items-center rounded-md border border-ink/15">
               <button
                 onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                className="grid h-11 w-11 place-items-center text-ink-muted hover:text-ink"
+                className="grid h-10 w-10 place-items-center text-ink-muted hover:text-ink sm:h-11 sm:w-11"
                 aria-label="Decrease quantity"
               >
                 <MinusIcon />
               </button>
-              <span className="w-8 text-center text-sm">{quantity}</span>
+              <span className="w-7 text-center text-sm sm:w-8">{quantity}</span>
               <button
                 onClick={() => setQuantity((q) => Math.min(product.stock, q + 1))}
-                className="grid h-11 w-11 place-items-center text-ink-muted hover:text-ink"
+                className="grid h-10 w-10 place-items-center text-ink-muted hover:text-ink sm:h-11 sm:w-11"
                 aria-label="Increase quantity"
               >
                 <PlusIcon />
@@ -80,7 +83,7 @@ export function ProductDetailPage() {
 
             <Button
               size="lg"
-              className="flex-1"
+              className="order-3 w-full sm:order-2 sm:w-auto sm:flex-1"
               disabled={outOfStock || !token}
               isLoading={addItem.isPending}
               onClick={() => addItem.mutate({ productId: product.id, quantity })}
@@ -92,6 +95,7 @@ export function ProductDetailPage() {
               <Button
                 size="lg"
                 variant="secondary"
+                className="order-2 sm:order-3"
                 aria-label="Toggle wishlist"
                 onClick={() => (isWishlisted ? removeWish.mutate(product.id) : addWish.mutate(product.id))}
               >

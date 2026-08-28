@@ -20,13 +20,13 @@ export function SalesDashboardPage() {
       <p className="eyebrow mb-2">Seller dashboard</p>
       <h1 className="mb-6 text-2xl font-bold text-ink">Your store</h1>
 
-      <div className="mb-8 flex gap-1 border-b border-ink/10">
+      <div className="scroll-rail mb-8 gap-0 border-b border-ink/10">
         {TABS.map(({ key, icon: Icon }) => (
           <button
             key={key}
             onClick={() => setTab(key)}
             className={cn(
-              'flex items-center gap-1.5 px-4 py-3 text-sm font-medium transition-colors',
+              'flex shrink-0 items-center gap-1.5 whitespace-nowrap px-3 py-3 text-sm font-medium transition-colors sm:px-4',
               tab === key ? 'border-b-2 border-forest text-ink' : 'text-ink-muted hover:text-ink'
             )}
           >

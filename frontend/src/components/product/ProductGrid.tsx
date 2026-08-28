@@ -5,7 +5,7 @@ import { EmptyState } from '@/components/ui/EmptyState';
 export function ProductGrid({ products, isLoading }: { products: Product[]; isLoading?: boolean }) {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
         {Array.from({ length: 10 }).map((_, i) => (
           <div key={i} className="overflow-hidden rounded-md border border-ink/10 bg-white">
             <div className="aspect-square animate-pulse bg-ink/5" />
@@ -25,7 +25,7 @@ export function ProductGrid({ products, isLoading }: { products: Product[]; isLo
   }
 
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
       {products.map((product) => (
         <ProductCard key={product.id} product={product} />
       ))}

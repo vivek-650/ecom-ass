@@ -50,13 +50,15 @@ export function AdminCategoriesTab() {
   return (
     <div>
       <form onSubmit={handleCreate} className="mb-4 flex max-w-sm items-end gap-2">
-        <Input
-          label="New category"
-          placeholder="e.g. Kitchen & Dining"
-          value={newName}
-          onChange={(e) => setNewName(e.target.value)}
-        />
-        <Button type="submit" size="md" isLoading={create.isPending} disabled={!newName.trim()}>
+        <div className="min-w-0 flex-1">
+          <Input
+            label="New category"
+            placeholder="e.g. Kitchen & Dining"
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+          />
+        </div>
+        <Button type="submit" size="md" isLoading={create.isPending} disabled={!newName.trim()} className="shrink-0">
           <PlusIcon size={14} /> Add
         </Button>
       </form>

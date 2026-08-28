@@ -29,7 +29,7 @@ export function OrdersPage() {
 
   return (
     <div className="container-lumos py-12">
-      <h1 className="mb-10 font-display text-4xl text-ink">Order history</h1>
+      <h1 className="mb-6 font-display text-2xl text-ink sm:mb-10 sm:text-4xl">Order history</h1>
       <div className="space-y-6">
         {orders.map((order) => (
           <div key={order.id} className="rounded-2xl border border-ink/10 p-6">

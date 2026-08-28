@@ -24,11 +24,11 @@ export function SalesOverviewTab() {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
         {cards.map((card) => (
-          <div key={card.label} className="rounded-md border border-ink/10 bg-white p-5">
-            <p className="eyebrow mb-2">{card.label}</p>
-            <p className="text-2xl font-bold text-ink">{card.value}</p>
+          <div key={card.label} className="min-w-0 rounded-md border border-ink/10 bg-white p-4 sm:p-5">
+            <p className="eyebrow mb-2 truncate">{card.label}</p>
+            <p className="truncate text-xl font-bold text-ink sm:text-2xl">{card.value}</p>
           </div>
         ))}
       </div>

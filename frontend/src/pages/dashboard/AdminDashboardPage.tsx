@@ -31,13 +31,13 @@ export function AdminDashboardPage() {
       <p className="eyebrow mb-2">Control center</p>
       <h1 className="mb-6 text-2xl font-bold text-ink">Admin dashboard</h1>
 
-      <div className="mb-8 flex gap-1 border-b border-ink/10">
+      <div className="scroll-rail mb-8 gap-0 border-b border-ink/10">
         {TABS.map(({ key, icon: Icon }) => (
           <button
             key={key}
             onClick={() => setTab(key)}
             className={cn(
-              'flex items-center gap-1.5 px-4 py-3 text-sm font-medium transition-colors',
+              'flex shrink-0 items-center gap-1.5 whitespace-nowrap px-3 py-3 text-sm font-medium transition-colors sm:px-4',
               tab === key ? 'border-b-2 border-forest text-ink' : 'text-ink-muted hover:text-ink'
             )}
           >
@@ -73,11 +73,11 @@ function OverviewTab() {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         {cards.map((card) => (
-          <div key={card.label} className="rounded-md border border-ink/10 bg-white p-5">
-            <p className="eyebrow mb-2">{card.label}</p>
-            <p className="text-2xl font-bold text-ink">{card.value}</p>
+          <div key={card.label} className="min-w-0 rounded-md border border-ink/10 bg-white p-4 sm:p-5">
+            <p className="eyebrow mb-2 truncate">{card.label}</p>
+            <p className="truncate text-xl font-bold text-ink sm:text-2xl">{card.value}</p>
           </div>
         ))}
       </div>
