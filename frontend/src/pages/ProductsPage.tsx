@@ -5,6 +5,8 @@ import { useDebounce } from '@/hooks/useDebounce';
 import { ProductFilters, type FilterState } from '@/components/product/ProductFilters';
 import { ProductGrid } from '@/components/product/ProductGrid';
 import { Button } from '@/components/ui/Button';
+import { RetryState } from '@/components/ui/RetryState';
+import { ApiRequestError } from '@/api/axiosClient';
 
 const PAGE_SIZE = 20;
 
@@ -32,7 +34,7 @@ export function ProductsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams.toString()]);
 
-  const { data, isLoading, isFetching } = useProducts({
+  const { data, isLoading, isFetching, isError, error, refetch } = useProducts({
     search: debouncedSearch || undefined,
     category: filters.category || undefined,
     minPrice: filters.minPrice ? Number(filters.minPrice) : undefined,
@@ -63,10 +65,17 @@ export function ProductsPage() {
       </div>
 
       <div className="mt-6">
-        <ProductGrid products={data?.items ?? []} isLoading={isLoading} />
+        {isError ? (
+          <RetryState
+            message={error instanceof ApiRequestError ? error.message : 'Could not load products.'}
+            onRetry={() => refetch()}
+          />
+        ) : (
+          <ProductGrid products={data?.items ?? []} isLoading={isLoading} />
+        )}
       </div>
 
-      {totalPages > 1 && (
+      {!isError && totalPages > 1 && (
         <div className="mt-10 flex items-center justify-center gap-4">
           <Button variant="secondary" size="sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
             Previous
