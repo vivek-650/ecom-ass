@@ -18,19 +18,27 @@ create table profiles (
 );
 
 -- Auto-create a profile row whenever a new user signs up via Supabase Auth.
+-- `set search_path = public` + schema-qualifying the enum cast avoids a
+-- well-known Supabase footgun: an unqualified `::user_role` cast inside a
+-- SECURITY DEFINER trigger can fail to resolve the type, which GoTrue then
+-- reports only as a generic "Database error saving new user".
 create function public.handle_new_user()
-returns trigger as $$
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
 begin
   insert into public.profiles (id, email, full_name, role)
   values (
     new.id,
     new.email,
     new.raw_user_meta_data ->> 'full_name',
-    coalesce((new.raw_user_meta_data ->> 'role')::user_role, 'user')
+    coalesce((new.raw_user_meta_data ->> 'role')::public.user_role, 'user')
   );
   return new;
 end;
-$$ language plpgsql security definer;
+$$;
 
 create trigger on_auth_user_created
   after insert on auth.users
@@ -53,10 +61,11 @@ create table products (
   updated_at   timestamptz not null default now()
 );
 
+create extension if not exists pg_trgm;
+
 create index idx_products_owner on products (owner_id);
 create index idx_products_category on products (category);
 create index idx_products_name_trgm on products using gin (name gin_trgm_ops);
-create extension if not exists pg_trgm;
 
 -- ---------------------------------------------------------------------
 -- 3. cart_items — one row per (user, product); quantity holds the count
