@@ -29,6 +29,7 @@ Thumbs.db
 
 # Vite
 .vite/
+*.tsbuildinfo
 
 # Misc
 coverage/
