@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { authApi } from '@/api/auth.api';
+import { useAuth } from '@/context/AuthContext';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 
@@ -9,6 +9,7 @@ export function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { signIn } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = (location.state as { from?: Location })?.from?.pathname || '/';
@@ -17,7 +18,7 @@ export function LoginPage() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      await authApi.signIn(email, password);
+      await signIn(email, password);
       navigate(from, { replace: true });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Could not sign in');

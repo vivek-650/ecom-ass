@@ -7,11 +7,11 @@ import type { WishlistItem } from '@/types';
 const WISHLIST_KEY = ['wishlist'];
 
 export function useWishlist() {
-  const { session } = useAuth();
+  const { token } = useAuth();
   return useQuery({
     queryKey: WISHLIST_KEY,
     queryFn: wishlistApi.get,
-    enabled: Boolean(session),
+    enabled: Boolean(token),
     initialData: [] as WishlistItem[],
   });
 }

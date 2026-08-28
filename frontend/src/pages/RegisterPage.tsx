@@ -20,7 +20,7 @@ export function RegisterPage() {
     setIsSubmitting(true);
     try {
       await authApi.signUp({ fullName, email, password, role });
-      toast.success('Account created — check your inbox to confirm your email, then sign in.');
+      toast.success('Account created — you can now sign in.');
       navigate('/login');
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Could not create account');

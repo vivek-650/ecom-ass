@@ -8,11 +8,11 @@ import type { CartItem } from '@/types';
 const CART_KEY = ['cart'];
 
 export function useCart() {
-  const { session } = useAuth();
+  const { token } = useAuth();
   return useQuery({
     queryKey: CART_KEY,
     queryFn: cartApi.get,
-    enabled: Boolean(session),
+    enabled: Boolean(token),
     initialData: [] as CartItem[],
   });
 }

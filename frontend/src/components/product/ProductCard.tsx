@@ -7,7 +7,7 @@ import { cn } from '@/utils/cn';
 import type { Product } from '@/types';
 
 export function ProductCard({ product }: { product: Product }) {
-  const { session } = useAuth();
+  const { token } = useAuth();
   const { addItem } = useCartMutations();
   const { addItem: addWish, removeItem: removeWish } = useWishlistMutations();
   const isWishlisted = useIsWishlisted(product.id);
@@ -15,14 +15,14 @@ export function ProductCard({ product }: { product: Product }) {
 
   const toggleWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (!session) return;
+    if (!token) return;
     if (isWishlisted) removeWish.mutate(product.id);
     else addWish.mutate(product.id);
   };
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (!session || outOfStock) return;
+    if (!token || outOfStock) return;
     addItem.mutate({ productId: product.id });
   };
 
@@ -47,7 +47,7 @@ export function ProductCard({ product }: { product: Product }) {
           </span>
         )}
 
-        {session && (
+        {token && (
           <button
             onClick={toggleWishlist}
             aria-label="Toggle wishlist"

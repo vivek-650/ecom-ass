@@ -1,57 +1,55 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import type { Session } from '@supabase/supabase-js';
+import { createContext, useContext, useState, type ReactNode } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/api/supabaseClient';
-import { authApi } from '@/api/auth.api';
+import { authApi, type SignUpPayload } from '@/api/auth.api';
+import { authToken } from '@/utils/authToken';
 import type { Profile } from '@/types';
 
 interface AuthContextValue {
-  session: Session | null;
+  token: string | null;
   profile: Profile | null;
   isLoading: boolean;
-  signOut: () => Promise<void>;
+  signUp: (payload: SignUpPayload) => Promise<void>;
+  signIn: (email: string, password: string) => Promise<void>;
+  signOut: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [session, setSession] = useState<Session | null>(null);
-  const [sessionResolved, setSessionResolved] = useState(false);
+  const [token, setToken] = useState<string | null>(() => authToken.get());
   const queryClient = useQueryClient();
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      setSessionResolved(true);
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-      setSession(nextSession);
-      // A different account may have signed in — drop every cached query so
-      // one user never sees a flash of another user's cart/orders/etc.
-      queryClient.clear();
-    });
-
-    return () => subscription.unsubscribe();
-  }, [queryClient]);
-
   const { data: profile, isLoading: profileLoading } = useQuery({
-    queryKey: ['profile', session?.user.id],
+    queryKey: ['profile', token],
     queryFn: authApi.me,
-    enabled: Boolean(session),
+    enabled: Boolean(token),
     staleTime: 5 * 60 * 1000,
+    retry: false,
   });
 
-  const signOut = async () => {
-    await authApi.signOut();
+  const signUp = async (payload: SignUpPayload) => {
+    await authApi.signUp(payload);
   };
 
-  const isLoading = !sessionResolved || (Boolean(session) && profileLoading);
+  const signIn = async (email: string, password: string) => {
+    const newToken = await authApi.signIn(email, password);
+    authToken.set(newToken);
+    // A different account may be signing in — drop every cached query so
+    // one user never sees a flash of another user's cart/orders/etc.
+    queryClient.clear();
+    setToken(newToken);
+  };
+
+  const signOut = () => {
+    authToken.clear();
+    queryClient.clear();
+    setToken(null);
+  };
+
+  const isLoading = Boolean(token) && profileLoading;
 
   return (
-    <AuthContext.Provider value={{ session, profile: profile ?? null, isLoading, signOut }}>
+    <AuthContext.Provider value={{ token, profile: profile ?? null, isLoading, signUp, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );

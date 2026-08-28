@@ -12,7 +12,7 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   );
 
 export function Navbar() {
-  const { session, profile, signOut } = useAuth();
+  const { token, profile, signOut } = useAuth();
   const navigate = useNavigate();
   const cartCount = useCartCount();
   const { data: wishlist } = useWishlist();
@@ -20,8 +20,8 @@ export function Navbar() {
 
   const canManageProducts = profile?.role === 'admin' || profile?.role === 'sales_person';
 
-  const handleSignOut = async () => {
-    await signOut();
+  const handleSignOut = () => {
+    signOut();
     navigate('/');
     setMenuOpen(false);
   };
@@ -58,7 +58,7 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-4">
-          {session && (
+          {token && (
             <Link
               to="/wishlist"
               className="relative hidden text-ink-muted transition-colors hover:text-ink sm:block"
@@ -82,7 +82,7 @@ export function Navbar() {
             )}
           </Link>
 
-          {session ? (
+          {token ? (
             <div className="relative">
               <button
                 onClick={() => setMenuOpen((v) => !v)}

@@ -12,7 +12,7 @@ import { PageSpinner } from '@/components/ui/Spinner';
 export function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { data: product, isLoading } = useProduct(id);
-  const { session } = useAuth();
+  const { token } = useAuth();
   const { addItem } = useCartMutations();
   const { addItem: addWish, removeItem: removeWish } = useWishlistMutations();
   const [quantity, setQuantity] = useState(1);
@@ -78,14 +78,14 @@ export function ProductDetailPage() {
             <Button
               size="lg"
               className="flex-1"
-              disabled={outOfStock || !session}
+              disabled={outOfStock || !token}
               isLoading={addItem.isPending}
               onClick={() => addItem.mutate({ productId: product.id, quantity })}
             >
               {outOfStock ? 'Unavailable' : 'Add to cart'}
             </Button>
 
-            {session && (
+            {token && (
               <Button
                 size="lg"
                 variant="secondary"
@@ -97,7 +97,7 @@ export function ProductDetailPage() {
             )}
           </div>
 
-          {!session && (
+          {!token && (
             <p className="mt-4 text-xs text-ink-muted">
               <Link to="/login" className="text-gold-deep hover:underline">
                 Sign in

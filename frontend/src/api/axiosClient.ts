@@ -1,23 +1,17 @@
 import axios, { AxiosError } from 'axios';
-import { supabase } from './supabaseClient';
+import { authToken } from '@/utils/authToken';
 import type { ApiEnvelope } from '@/types';
 
 const baseURL = import.meta.env.VITE_API_BASE_URL as string;
 
 export const axiosClient = axios.create({ baseURL });
 
-/**
- * Every request rides on the Supabase session's access token — this is the
- * single place that bridges Supabase Auth (frontend) to the Express API's
- * requireAuth middleware (backend).
- */
-axiosClient.interceptors.request.use(async (config) => {
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  if (session?.access_token) {
-    config.headers.Authorization = `Bearer ${session.access_token}`;
-  }
+// Every request rides on our own JWT (see utils/authToken.ts) — this is the
+// single place that attaches it, bridging login (POST /auth/login) to every
+// other request's requireAuth middleware on the backend.
+axiosClient.interceptors.request.use((config) => {
+  const token = authToken.get();
+  if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
