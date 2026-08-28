@@ -6,7 +6,7 @@ const baseURL = import.meta.env.VITE_API_BASE_URL as string;
 
 // A hung upstream (e.g. the DB provider having a slow moment) should fail
 // fast with a clear error instead of leaving the UI spinning indefinitely.
-export const axiosClient = axios.create({ baseURL, timeout: 15_000 });
+export const axiosClient = axios.create({ baseURL, timeout: 10_000 });
 
 // Every request rides on our own JWT (see utils/authToken.ts) — this is the
 // single place that attaches it, bridging login (POST /auth/login) to every
