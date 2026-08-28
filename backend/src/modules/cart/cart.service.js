@@ -54,6 +54,20 @@ export async function addToCart(userId, productId, quantity = 1) {
 export async function updateCartItem(userId, itemId, quantity) {
   if (quantity < 1) throw ApiError.badRequest('Quantity must be at least 1');
 
+  // The frontend already caps quantity at product.stock client-side, but
+  // that's UX, not enforcement -- addToCart validates stock server-side, so
+  // this path needs the same check rather than trusting whatever number a
+  // direct API call sends.
+  const { data: item, error: itemError } = await supabaseAdmin
+    .from('cart_items')
+    .select('product:products(stock)')
+    .eq('id', itemId)
+    .eq('user_id', userId)
+    .maybeSingle();
+  if (itemError) throw ApiError.internal(itemError.message);
+  if (!item) throw ApiError.notFound('Cart item not found');
+  if (quantity > item.product.stock) throw ApiError.badRequest('Not enough stock available');
+
   const { data, error } = await supabaseAdmin
     .from('cart_items')
     .update({ quantity })
