@@ -4,45 +4,22 @@
 -- =========================================================================
 
 -- ---------------------------------------------------------------------
--- 1. profiles — one row per authenticated user, extends auth.users
---    role drives every RBAC check in the Express backend.
+-- 1. profiles — one row per user. This is our own identity table, not an
+--    extension of Supabase Auth: Supabase here is Postgres only.
+--    Authentication (password hashing + JWT issuance) is hand-rolled in
+--    the Express backend — see backend/src/modules/auth. role drives
+--    every RBAC check there.
 -- ---------------------------------------------------------------------
 create type user_role as enum ('admin', 'sales_person', 'user');
 
 create table profiles (
-  id           uuid primary key references auth.users (id) on delete cascade,
-  email        text not null,
-  full_name    text,
-  role         user_role not null default 'user',
-  created_at   timestamptz not null default now()
+  id            uuid primary key default gen_random_uuid(),
+  email         text not null unique,
+  password_hash text not null,
+  full_name     text,
+  role          user_role not null default 'user',
+  created_at    timestamptz not null default now()
 );
-
--- Auto-create a profile row whenever a new user signs up via Supabase Auth.
--- `set search_path = public` + schema-qualifying the enum cast avoids a
--- well-known Supabase footgun: an unqualified `::user_role` cast inside a
--- SECURITY DEFINER trigger can fail to resolve the type, which GoTrue then
--- reports only as a generic "Database error saving new user".
-create function public.handle_new_user()
-returns trigger
-language plpgsql
-security definer
-set search_path = public
-as $$
-begin
-  insert into public.profiles (id, email, full_name, role)
-  values (
-    new.id,
-    new.email,
-    new.raw_user_meta_data ->> 'full_name',
-    coalesce((new.raw_user_meta_data ->> 'role')::public.user_role, 'user')
-  );
-  return new;
-end;
-$$;
-
-create trigger on_auth_user_created
-  after insert on auth.users
-  for each row execute procedure public.handle_new_user();
 
 -- ---------------------------------------------------------------------
 -- 2. products — owner_id is the Sales Person (or Admin) who listed it
@@ -147,12 +124,16 @@ create index idx_idempotency_lookup on idempotency_keys (idempotency_key, user_i
 
 -- ---------------------------------------------------------------------
 -- Row Level Security
--- The Express backend talks to Supabase with the service_role key, which
--- bypasses RLS by design — all authorization is enforced in Express
--- middleware (see backend/src/middleware/role.middleware.js) so that a
--- restricted action fails on the server, not just in the UI.
--- RLS is still enabled here as defense-in-depth in case a client ever
--- talks to Supabase directly with the anon key.
+-- The Express backend is the ONLY thing that ever talks to this database —
+-- the frontend never calls Supabase directly (auth is our own, not Supabase
+-- Auth, so there's no anon-key client anywhere in this app). The backend
+-- always connects with the service_role key, which bypasses RLS by design;
+-- all authorization is enforced in Express middleware instead (see
+-- backend/src/middleware/role.middleware.js) so a restricted action fails
+-- on the server, not just in the UI.
+-- RLS is enabled with no policies on purpose: it's a hard backstop that
+-- denies every row to any hypothetical non-service-role client, since
+-- there's no auth.uid() session context for policies to check against here.
 -- ---------------------------------------------------------------------
 alter table profiles enable row level security;
 alter table products enable row level security;
@@ -161,18 +142,3 @@ alter table wishlist_items enable row level security;
 alter table orders enable row level security;
 alter table order_items enable row level security;
 alter table idempotency_keys enable row level security;
-
-create policy "profiles are self-readable" on profiles
-  for select using (auth.uid() = id);
-
-create policy "products are publicly readable" on products
-  for select using (true);
-
-create policy "cart is private to owner" on cart_items
-  for all using (auth.uid() = user_id);
-
-create policy "wishlist is private to owner" on wishlist_items
-  for all using (auth.uid() = user_id);
-
-create policy "orders are private to owner" on orders
-  for select using (auth.uid() = user_id);

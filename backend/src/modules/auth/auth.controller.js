@@ -18,27 +18,16 @@ export const register = asyncHandler(async (req, res) => {
     throw ApiError.badRequest(`role must be one of: ${SELF_REGISTERABLE_ROLES.join(', ')}`);
   }
 
-  const user = await authService.registerUser({ email, password, fullName, role });
-  new ApiResponse(201, { id: user.id, email: user.email }, 'Account created — you can now sign in').send(res);
+  const profile = await authService.registerUser({ email, password, fullName, role });
+  new ApiResponse(201, profile, 'Account created — you can now sign in').send(res);
 });
 
 export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) throw ApiError.badRequest('email and password are required');
 
-  const { user, session } = await authService.loginUser({ email, password });
-  new ApiResponse(
-    200,
-    {
-      user: { id: user.id, email: user.email },
-      session: {
-        access_token: session.access_token,
-        refresh_token: session.refresh_token,
-        expires_at: session.expires_at,
-      },
-    },
-    'Signed in'
-  ).send(res);
+  const { token, user } = await authService.loginUser({ email, password });
+  new ApiResponse(200, { token, user }, 'Signed in').send(res);
 });
 
 export const getMe = asyncHandler(async (req, res) => {

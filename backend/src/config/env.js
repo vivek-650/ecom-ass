@@ -15,12 +15,16 @@ export const env = {
     .split(',')
     .map((origin) => origin.trim()),
 
+  // Supabase is used purely as a Postgres database here (via the service-role
+  // key, through supabase-js's REST query builder) — Auth is our own, below.
   supabase: {
     url: required('SUPABASE_URL'),
     serviceRoleKey: required('SUPABASE_SERVICE_ROLE_KEY'),
-    anonKey: required('SUPABASE_ANON_KEY'),
-    jwtSecret: process.env.SUPABASE_JWT_SECRET || '',
   },
+
+  // Signs/verifies our own session tokens (see modules/auth). Unrelated to
+  // Supabase — generate with `openssl rand -hex 32` or similar.
+  jwtSecret: required('JWT_SECRET'),
 
   cloudinary: {
     cloudName: required('CLOUDINARY_CLOUD_NAME'),
