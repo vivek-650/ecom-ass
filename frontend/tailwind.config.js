@@ -11,7 +11,7 @@ export default {
         },
         paper: {
           DEFAULT: '#FFFFFF',
-          dim: '#F7F8FA',
+          dim: '#F3F4F6',
         },
         // The single brand accent -- used only for primary actions, links,
         // and focus states. Nothing else carries color.
