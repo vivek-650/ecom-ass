@@ -91,7 +91,7 @@ export function SalesProductsPage() {
                   <td className="px-5 py-3">{product.stock}</td>
                   <td className="px-5 py-3 text-right">
                     <button
-                      className="mr-4 text-xs uppercase tracking-widest text-gold-deep hover:underline"
+                      className="mr-4 text-xs uppercase tracking-widest text-forest-deep hover:underline"
                       onClick={() => setModalState({ mode: 'edit', product })}
                     >
                       Edit

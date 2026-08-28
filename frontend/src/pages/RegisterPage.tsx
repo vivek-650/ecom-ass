@@ -57,7 +57,7 @@ export function RegisterPage() {
 
         <p className="mt-6 text-center text-sm text-ink-muted">
           Already have an account?{' '}
-          <Link to="/login" className="text-gold-deep hover:underline">
+          <Link to="/login" className="text-forest-deep hover:underline">
             Sign in
           </Link>
         </p>

@@ -1,10 +1,9 @@
 import type { ReactNode } from 'react';
 import { cn } from '@/utils/cn';
 
-type Tone = 'gold' | 'forest' | 'ember' | 'neutral';
+type Tone = 'forest' | 'ember' | 'neutral';
 
 const toneStyles: Record<Tone, string> = {
-  gold: 'bg-gold/20 text-ink',
   forest: 'bg-forest/10 text-forest-deep',
   ember: 'bg-ember/10 text-ember',
   neutral: 'bg-ink/6 text-ink-muted',

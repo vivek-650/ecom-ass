@@ -38,7 +38,7 @@
   }
 
   ::selection {
-    @apply bg-gold/40 text-ink;
+    @apply bg-forest/25 text-ink;
   }
 
   *:focus-visible {

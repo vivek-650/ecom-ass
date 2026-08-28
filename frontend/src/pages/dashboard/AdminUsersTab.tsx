@@ -31,7 +31,7 @@ export function AdminUsersTab() {
                 <select
                   value={user.role}
                   onChange={(e) => updateRole.mutate({ id: user.id, role: e.target.value as Role })}
-                  className="rounded-full border border-ink/15 bg-paper px-3 py-1.5 font-mono text-xs uppercase tracking-widest focus:border-gold focus:outline-none"
+                  className="rounded-full border border-ink/15 bg-paper px-3 py-1.5 font-mono text-xs uppercase tracking-widest focus:border-forest focus:outline-none"
                 >
                   {ROLE_OPTIONS.map((role) => (
                     <option key={role} value={role}>

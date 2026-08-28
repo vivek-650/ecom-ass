@@ -85,7 +85,7 @@ export function Navbar() {
                   onClick={() => setMenuOpen((v) => !v)}
                   className="flex items-center gap-2 rounded-md border border-ink/15 py-1.5 pl-1.5 pr-3 text-sm font-medium text-ink hover:border-ink/30"
                 >
-                  <span className="grid h-7 w-7 place-items-center rounded-full bg-gold text-xs font-bold uppercase text-ink">
+                  <span className="grid h-7 w-7 place-items-center rounded-full bg-ink text-xs font-bold uppercase text-white">
                     {profile?.full_name?.[0] || profile?.email?.[0] || '?'}
                   </span>
                   <span className="hidden max-w-[100px] truncate sm:inline">{profile?.full_name || 'Account'}</span>
@@ -142,7 +142,7 @@ export function Navbar() {
               </div>
             ) : (
               <Link to="/login">
-                <span className="rounded-md bg-gold px-4 py-2 text-sm font-semibold text-ink hover:bg-gold-deep">
+                <span className="rounded-md bg-forest px-4 py-2 text-sm font-semibold text-white hover:bg-forest-deep">
                   Login
                 </span>
               </Link>

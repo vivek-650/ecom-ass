@@ -49,7 +49,7 @@ export function LoginPage() {
 
         <p className="mt-6 text-center text-sm text-ink-muted">
           New here?{' '}
-          <Link to="/register" className="text-gold-deep hover:underline">
+          <Link to="/register" className="text-forest-deep hover:underline">
             Create an account
           </Link>
         </p>

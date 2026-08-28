@@ -73,7 +73,7 @@ export function ProductCard({ product }: { product: Product }) {
           <button
             onClick={handleAddToCart}
             disabled={outOfStock || addItem.isPending}
-            className="rounded bg-gold px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-ink transition-colors hover:bg-gold-deep disabled:cursor-not-allowed disabled:opacity-40"
+            className="rounded bg-forest px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-forest-deep disabled:cursor-not-allowed disabled:opacity-40"
           >
             {outOfStock ? 'N/A' : 'Add'}
           </button>

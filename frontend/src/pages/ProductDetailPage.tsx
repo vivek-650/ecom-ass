@@ -24,7 +24,7 @@ export function ProductDetailPage() {
     return (
       <div className="container-lumos py-24 text-center">
         <p className="font-display text-2xl text-ink">Product not found</p>
-        <Link to="/products" className="mt-4 inline-block text-sm text-gold-deep hover:underline">
+        <Link to="/products" className="mt-4 inline-block text-sm text-forest-deep hover:underline">
           ← Back to shop
         </Link>
       </div>
@@ -46,7 +46,7 @@ export function ProductDetailPage() {
         </div>
 
         <div className="flex flex-col">
-          <Badge tone="gold">{product.category}</Badge>
+          <Badge tone="neutral">{product.category}</Badge>
           <h1 className="mt-4 font-display text-4xl leading-tight text-ink">{product.name}</h1>
           <p className="price mt-4 text-2xl text-ink">{formatCurrency(product.price)}</p>
 
@@ -99,7 +99,7 @@ export function ProductDetailPage() {
 
           {!token && (
             <p className="mt-4 text-xs text-ink-muted">
-              <Link to="/login" className="text-gold-deep hover:underline">
+              <Link to="/login" className="text-forest-deep hover:underline">
                 Sign in
               </Link>{' '}
               to add items to your cart or wishlist.

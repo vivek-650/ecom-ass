@@ -67,7 +67,7 @@ export function ProductForm({
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={3}
-          className="rounded-lg border border-ink/15 bg-paper px-3.5 py-2.5 text-sm text-ink focus:border-gold focus:outline-none"
+          className="rounded-lg border border-ink/15 bg-paper px-3.5 py-2.5 text-sm text-ink focus:border-forest focus:outline-none"
         />
       </div>
 

@@ -35,7 +35,7 @@ export function CartPage() {
         description: 'Order payment (test mode)',
         order_id: razorpayOrder.razorpayOrderId,
         prefill: { name: profile?.full_name ?? undefined, email: profile?.email },
-        theme: { color: '#C9A15A' },
+        theme: { color: '#15803D' },
         handler: async (response) => {
           try {
             await verifyPayment.mutateAsync({
@@ -88,7 +88,7 @@ export function CartPage() {
               </div>
               <div className="flex flex-1 flex-col justify-between">
                 <div>
-                  <Link to={`/products/${item.product.id}`} className="font-display text-lg text-ink hover:text-gold-deep">
+                  <Link to={`/products/${item.product.id}`} className="font-display text-lg text-ink hover:text-forest-deep">
                     {item.product.name}
                   </Link>
                   <p className="price mt-1 text-sm text-ink-muted">{formatCurrency(item.product.price)}</p>

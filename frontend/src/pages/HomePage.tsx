@@ -3,9 +3,9 @@ import { useProducts } from '@/hooks/useProducts';
 import { ProductGrid } from '@/components/product/ProductGrid';
 
 const PROMOS = [
-  { title: 'New arrivals', sub: 'Freshly listed this week', tone: 'bg-gold text-ink', href: '/products' },
-  { title: 'Sell on Lumos', sub: 'List your first product', tone: 'bg-ink text-white', href: '/register' },
-  { title: 'Top picks', sub: 'Loved by shoppers', tone: 'bg-forest text-white', href: '/products' },
+  { title: 'New arrivals', sub: 'Freshly listed this week', href: '/products' },
+  { title: 'Sell on Lumos', sub: 'List your first product', href: '/register' },
+  { title: 'Top picks', sub: 'Loved by shoppers', href: '/products' },
 ];
 
 export function HomePage() {
@@ -13,25 +13,25 @@ export function HomePage() {
 
   return (
     <div className="bg-paper-dim pb-14">
-      <section className="container-lumos pt-4">
-        <div className="scroll-rail">
+      <section className="container-lumos pt-6">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           {PROMOS.map((promo) => (
             <Link
               key={promo.title}
               to={promo.href}
-              className={`flex w-64 shrink-0 flex-col justify-between rounded-md p-5 sm:w-80 ${promo.tone}`}
+              className="flex flex-col justify-between rounded-md border border-ink/10 bg-white p-5 transition-colors hover:border-ink/20"
             >
               <div>
-                <p className="text-xs font-semibold uppercase tracking-widest opacity-70">{promo.sub}</p>
-                <p className="mt-1 text-2xl font-extrabold">{promo.title}</p>
+                <p className="eyebrow text-ink-muted">{promo.sub}</p>
+                <p className="mt-1 text-xl font-bold text-ink">{promo.title}</p>
               </div>
-              <span className="mt-6 text-sm font-semibold underline underline-offset-4">Explore now →</span>
+              <span className="mt-6 text-sm font-semibold text-forest">Explore now →</span>
             </Link>
           ))}
         </div>
       </section>
 
-      <section className="container-lumos mt-8">
+      <section className="container-lumos mt-6">
         <div className="rounded-md border border-ink/10 bg-white p-4 sm:p-6">
           <div className="mb-4 flex items-end justify-between">
             <h2 className="text-lg font-bold text-ink">New arrivals</h2>

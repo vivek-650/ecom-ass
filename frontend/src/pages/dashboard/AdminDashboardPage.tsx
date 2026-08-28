@@ -25,7 +25,7 @@ export function AdminDashboardPage() {
             onClick={() => setTab(t)}
             className={cn(
               'px-4 py-3 text-sm transition-colors',
-              tab === t ? 'border-b-2 border-gold text-ink' : 'text-ink-muted hover:text-ink'
+              tab === t ? 'border-b-2 border-forest text-ink' : 'text-ink-muted hover:text-ink'
             )}
           >
             {t}

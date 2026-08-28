@@ -5,28 +5,23 @@ export default {
     extend: {
       colors: {
         ink: {
-          DEFAULT: '#1A1A1A',
-          soft: '#2B2B2B',
-          muted: '#6B7280',
+          DEFAULT: '#0F172A',
+          soft: '#1E293B',
+          muted: '#64748B',
         },
         paper: {
           DEFAULT: '#FFFFFF',
-          dim: '#F1F3F6',
+          dim: '#F7F8FA',
         },
-        // Brand yellow -- highlights, promo surfaces, the account pill.
-        gold: {
-          DEFAULT: '#FFC900',
-          deep: '#E8A800',
-          pale: '#FFF8E1',
-        },
-        // Brand green -- primary CTA ("ADD"), success states.
+        // The single brand accent -- used only for primary actions, links,
+        // and focus states. Nothing else carries color.
         forest: {
-          DEFAULT: '#0C9942',
-          deep: '#087A34',
-          pale: '#E3F8EA',
+          DEFAULT: '#15803D',
+          deep: '#116C32',
+          pale: '#E9F5EE',
         },
-        // Sale / discount tags.
-        ember: '#E23744',
+        // Errors and discount/sale tags only.
+        ember: '#DC2626',
       },
       fontFamily: {
         display: ['"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
@@ -34,8 +29,8 @@ export default {
         mono: ['"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
-        card: '0 1px 2px rgba(26, 26, 26, 0.06)',
-        'card-hover': '0 2px 10px rgba(26, 26, 26, 0.12)',
+        card: '0 1px 2px rgba(15, 23, 42, 0.05)',
+        'card-hover': '0 4px 14px rgba(15, 23, 42, 0.10)',
       },
       backgroundImage: {
         'radial-glow': 'none',
