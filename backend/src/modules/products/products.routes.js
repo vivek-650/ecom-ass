@@ -11,7 +11,6 @@ const canManageProducts = restrictTo(ROLES.ADMIN, ROLES.SALES_PERSON);
 
 // Public catalogue
 router.get('/', controller.getProducts);
-router.get('/categories', controller.getCategories);
 
 // Seller's own listings — must come before /:id so "mine" isn't parsed as an id
 router.get('/mine', requireAuth, canManageProducts, controller.getMyProducts);

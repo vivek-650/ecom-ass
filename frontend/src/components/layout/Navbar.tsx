@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useCartCount } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
-import { useCategories } from '@/hooks/useProducts';
+import { useCategories } from '@/hooks/useCategories';
 import { getCategoryIcon } from '@/utils/categoryIcons';
 import { SearchBar } from './SearchBar';
 import { BagIcon, HeartIcon, ChevronDownIcon, GridIcon, PackageIcon, UsersIcon } from '@/components/ui/Icons';
@@ -136,17 +136,17 @@ export function Navbar() {
                 All products
               </Link>
               {categories.map((category) => {
-                const Icon = getCategoryIcon(category);
+                const Icon = getCategoryIcon(category.name);
                 return (
                   <Link
-                    key={category}
-                    to={`/products?category=${encodeURIComponent(category)}`}
+                    key={category.id}
+                    to={`/products?category=${encodeURIComponent(category.name)}`}
                     className={cn(
                       'flex shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-semibold text-ink-muted transition-colors hover:bg-ink/5 hover:text-ink'
                     )}
                   >
                     <Icon size={15} />
-                    {category}
+                    {category.name}
                   </Link>
                 );
               })}

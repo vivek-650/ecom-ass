@@ -8,6 +8,12 @@ export interface Profile {
   created_at: string;
 }
 
+export interface Category {
+  id: string;
+  name: string;
+  created_at: string;
+}
+
 export interface Product {
   id: string;
   owner_id: string;
@@ -15,6 +21,7 @@ export interface Product {
   description: string | null;
   price: number;
   category: string;
+  category_id: string;
   stock: number;
   image_url: string | null;
   created_at: string;

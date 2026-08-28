@@ -10,14 +10,6 @@ export function useProducts(filters: ProductFilters) {
   });
 }
 
-export function useCategories() {
-  return useQuery({
-    queryKey: ['categories'],
-    queryFn: productsApi.categories,
-    staleTime: 10 * 60 * 1000,
-  });
-}
-
 export function useProduct(id: string | undefined) {
   return useQuery({
     queryKey: ['product', id],

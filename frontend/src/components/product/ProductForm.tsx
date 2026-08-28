@@ -1,6 +1,8 @@
 import { useState, type FormEvent } from 'react';
 import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
+import { useCategories } from '@/hooks/useCategories';
 import type { Product } from '@/types';
 import type { ProductPayload } from '@/api/products.api';
 
@@ -13,10 +15,11 @@ export function ProductForm({
   onSubmit: (payload: ProductPayload) => void;
   isSubmitting: boolean;
 }) {
+  const { data: categories = [] } = useCategories();
   const [name, setName] = useState(initial?.name ?? '');
   const [description, setDescription] = useState(initial?.description ?? '');
   const [price, setPrice] = useState(initial?.price?.toString() ?? '');
-  const [category, setCategory] = useState(initial?.category ?? '');
+  const [categoryId, setCategoryId] = useState(initial?.category_id ?? '');
   const [stock, setStock] = useState(initial?.stock?.toString() ?? '0');
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(initial?.image_url ?? null);
@@ -32,7 +35,7 @@ export function ProductForm({
       name,
       description,
       price: Number(price),
-      category,
+      categoryId,
       stock: Number(stock),
       image,
     });
@@ -74,10 +77,24 @@ export function ProductForm({
       <div className="grid grid-cols-3 gap-3">
         <Input label="Price (₹)" type="number" min={0} step="0.01" required value={price} onChange={(e) => setPrice(e.target.value)} />
         <Input label="Stock" type="number" min={0} required value={stock} onChange={(e) => setStock(e.target.value)} />
-        <Input label="Category" required value={category} onChange={(e) => setCategory(e.target.value)} />
+        <Select label="Category" required value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
+          <option value="" disabled>
+            Select…
+          </option>
+          {categories.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </Select>
       </div>
+      {categories.length === 0 && (
+        <p className="text-xs text-ink-muted">
+          No categories exist yet — ask an Admin to add one from the Admin dashboard's Categories tab.
+        </p>
+      )}
 
-      <Button type="submit" className="w-full" isLoading={isSubmitting}>
+      <Button type="submit" className="w-full" isLoading={isSubmitting} disabled={!categoryId}>
         {initial ? 'Save changes' : 'List product'}
       </Button>
     </form>

@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { useSalesStats, useAllOrders } from '@/hooks/useOrders';
 import { useProducts } from '@/hooks/useProducts';
 import { AdminProductsTab } from './AdminProductsTab';
+import { AdminCategoriesTab } from './AdminCategoriesTab';
 import { AdminUsersTab } from './AdminUsersTab';
 import { formatCurrency } from '@/utils/formatCurrency';
 import { Badge } from '@/components/ui/Badge';
@@ -10,12 +11,13 @@ import { PageSpinner } from '@/components/ui/Spinner';
 import { SalesTrendChart } from '@/components/dashboard/SalesTrendChart';
 import { LowStockAlert } from '@/components/dashboard/LowStockAlert';
 import { RecentOrdersList } from '@/components/dashboard/RecentOrdersList';
-import { ChartIcon, GridIcon, UsersIcon, BagIcon, SearchIcon } from '@/components/ui/Icons';
+import { ChartIcon, GridIcon, TagIcon, UsersIcon, BagIcon, SearchIcon } from '@/components/ui/Icons';
 import { cn } from '@/utils/cn';
 
 const TABS = [
   { key: 'Overview', icon: ChartIcon },
   { key: 'Products', icon: GridIcon },
+  { key: 'Categories', icon: TagIcon },
   { key: 'Users', icon: UsersIcon },
   { key: 'Orders', icon: BagIcon },
 ] as const;
@@ -47,6 +49,7 @@ export function AdminDashboardPage() {
 
       {tab === 'Overview' && <OverviewTab />}
       {tab === 'Products' && <AdminProductsTab />}
+      {tab === 'Categories' && <AdminCategoriesTab />}
       {tab === 'Users' && <AdminUsersTab />}
       {tab === 'Orders' && <OrdersTab />}
     </div>

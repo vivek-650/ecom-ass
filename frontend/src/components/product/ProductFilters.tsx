@@ -1,4 +1,4 @@
-import { useCategories } from '@/hooks/useProducts';
+import { useCategories } from '@/hooks/useCategories';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 
@@ -34,8 +34,8 @@ export function ProductFilters({
         <Select label="Category" value={filters.category} onChange={(e) => set({ category: e.target.value })}>
           <option value="">All categories</option>
           {categories.map((c) => (
-            <option key={c} value={c}>
-              {c}
+            <option key={c.id} value={c.name}>
+              {c.name}
             </option>
           ))}
         </Select>

@@ -5,7 +5,7 @@ export interface ProductPayload {
   name: string;
   description?: string;
   price: number;
-  category: string;
+  categoryId: string;
   stock: number;
   image?: File | null;
 }
@@ -22,8 +22,6 @@ function toFormData(payload: Partial<ProductPayload>): FormData {
 export const productsApi = {
   list: (filters: ProductFilters) =>
     unwrap<ProductListResult>(axiosClient.get('/products', { params: filters })),
-
-  categories: () => unwrap<string[]>(axiosClient.get('/products/categories')),
 
   getById: (id: string) => unwrap<Product>(axiosClient.get(`/products/${id}`)),
 

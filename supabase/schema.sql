@@ -22,15 +22,27 @@ create table profiles (
 );
 
 -- ---------------------------------------------------------------------
--- 2. products — owner_id is the Sales Person (or Admin) who listed it
+-- 2. categories — managed by Admins (see backend/src/modules/categories).
+--    Deleting a category that products still reference is blocked by the
+--    FK (no ON DELETE CASCADE) — the API surfaces that as a clear 409
+--    rather than silently orphaning or mass-deleting products.
+-- ---------------------------------------------------------------------
+create table categories (
+  id          uuid primary key default gen_random_uuid(),
+  name        text not null unique,
+  created_at  timestamptz not null default now()
+);
+
+-- ---------------------------------------------------------------------
+-- 3. products — owner_id is the Sales Person (or Admin) who listed it
 -- ---------------------------------------------------------------------
 create table products (
   id           uuid primary key default gen_random_uuid(),
   owner_id     uuid not null references profiles (id) on delete cascade,
+  category_id  uuid not null references categories (id),
   name         text not null,
   description  text,
   price        numeric(10, 2) not null check (price >= 0),
-  category     text not null,
   stock        integer not null default 0 check (stock >= 0),
   image_url    text,
   image_public_id text,
@@ -41,11 +53,11 @@ create table products (
 create extension if not exists pg_trgm;
 
 create index idx_products_owner on products (owner_id);
-create index idx_products_category on products (category);
+create index idx_products_category on products (category_id);
 create index idx_products_name_trgm on products using gin (name gin_trgm_ops);
 
 -- ---------------------------------------------------------------------
--- 3. cart_items — one row per (user, product); quantity holds the count
+-- 4. cart_items — one row per (user, product); quantity holds the count
 -- ---------------------------------------------------------------------
 create table cart_items (
   id           uuid primary key default gen_random_uuid(),
@@ -57,7 +69,7 @@ create table cart_items (
 );
 
 -- ---------------------------------------------------------------------
--- 4. wishlist_items — one row per (user, product)
+-- 5. wishlist_items — one row per (user, product)
 -- ---------------------------------------------------------------------
 create table wishlist_items (
   id           uuid primary key default gen_random_uuid(),
@@ -68,7 +80,7 @@ create table wishlist_items (
 );
 
 -- ---------------------------------------------------------------------
--- 5. orders — one row per checkout; Razorpay fields verify the payment
+-- 6. orders — one row per checkout; Razorpay fields verify the payment
 -- ---------------------------------------------------------------------
 create type order_status as enum ('created', 'paid', 'failed');
 
@@ -84,7 +96,7 @@ create table orders (
 );
 
 -- ---------------------------------------------------------------------
--- 6. order_items — line items; seller_id is denormalised for fast
+-- 7. order_items — line items; seller_id is denormalised for fast
 --    "orders containing my products" lookups by Sales Person
 -- ---------------------------------------------------------------------
 create table order_items (
@@ -101,7 +113,7 @@ create index idx_order_items_order on order_items (order_id);
 create index idx_order_items_seller on order_items (seller_id);
 
 -- ---------------------------------------------------------------------
--- 7. idempotency_keys — backs the Idempotency-Key middleware
+-- 8. idempotency_keys — backs the Idempotency-Key middleware
 --    (backend/src/middleware/idempotency.middleware.js). A client retrying
 --    a checkout request after a timeout/network blip replays the first
 --    response instead of creating a second Razorpay order.
@@ -136,6 +148,7 @@ create index idx_idempotency_lookup on idempotency_keys (idempotency_key, user_i
 -- there's no auth.uid() session context for policies to check against here.
 -- ---------------------------------------------------------------------
 alter table profiles enable row level security;
+alter table categories enable row level security;
 alter table products enable row level security;
 alter table cart_items enable row level security;
 alter table wishlist_items enable row level security;

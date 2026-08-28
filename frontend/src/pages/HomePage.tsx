@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { useCategories, useProducts } from '@/hooks/useProducts';
+import { useProducts } from '@/hooks/useProducts';
+import { useCategories } from '@/hooks/useCategories';
 import { ProductGrid } from '@/components/product/ProductGrid';
 import { getCategoryIcon } from '@/utils/categoryIcons';
 
@@ -45,18 +46,18 @@ export function HomePage() {
             <h2 className="mb-4 text-lg font-bold text-ink">Shop by category</h2>
             <div className="grid grid-cols-3 gap-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-11">
               {categories.map((category) => {
-                const Icon = getCategoryIcon(category);
+                const Icon = getCategoryIcon(category.name);
                 return (
                   <Link
-                    key={category}
-                    to={`/products?category=${encodeURIComponent(category)}`}
+                    key={category.id}
+                    to={`/products?category=${encodeURIComponent(category.name)}`}
                     className="flex flex-col items-center gap-2 rounded-md border border-ink/10 p-3 text-center transition-colors hover:border-forest/40 hover:bg-forest/5"
                   >
                     <span className="grid h-9 w-9 place-items-center rounded-full bg-ink/5 text-ink">
                       <Icon size={18} />
                     </span>
                     <span className="line-clamp-2 text-[11px] font-medium leading-tight text-ink-muted">
-                      {category}
+                      {category.name}
                     </span>
                   </Link>
                 );
@@ -70,7 +71,7 @@ export function HomePage() {
         <ProductGrid products={newArrivals?.items ?? []} isLoading={loadingNew} />
       </ProductSection>
 
-      {FEATURED_CATEGORIES.filter((c) => categories.includes(c)).map((category) => (
+      {FEATURED_CATEGORIES.filter((c) => categories.some((cat) => cat.name === c)).map((category) => (
         <CategorySection key={category} category={category} />
       ))}
     </div>
