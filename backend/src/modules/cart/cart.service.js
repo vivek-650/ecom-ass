@@ -3,8 +3,13 @@ import { ApiError } from '../../utils/ApiError.js';
 
 const CART_SELECT = `
   id, quantity, created_at,
-  product:products ( id, name, price, image_url, stock, category, owner_id )
+  product:products ( id, name, price, image_url, stock, owner_id, category:categories(name) )
 `;
+
+/** Flattens the embedded { category: { name } } object into a plain string, matching products.service.js. */
+function flattenCartItem(row) {
+  return { ...row, product: { ...row.product, category: row.product.category?.name ?? null } };
+}
 
 export async function getCart(userId) {
   const { data, error } = await supabaseAdmin
@@ -13,7 +18,7 @@ export async function getCart(userId) {
     .eq('user_id', userId)
     .order('created_at', { ascending: true });
   if (error) throw ApiError.internal(error.message);
-  return data;
+  return data.map(flattenCartItem);
 }
 
 /** Adding an item already in the cart increments its quantity instead of duplicating the row. */

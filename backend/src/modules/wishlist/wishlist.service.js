@@ -3,8 +3,13 @@ import { ApiError } from '../../utils/ApiError.js';
 
 const WISHLIST_SELECT = `
   id, created_at,
-  product:products ( id, name, price, image_url, stock, category )
+  product:products ( id, name, price, image_url, stock, category:categories(name) )
 `;
+
+/** Flattens the embedded { category: { name } } object into a plain string, matching products.service.js. */
+function flattenWishlistItem(row) {
+  return { ...row, product: { ...row.product, category: row.product.category?.name ?? null } };
+}
 
 export async function getWishlist(userId) {
   const { data, error } = await supabaseAdmin
@@ -13,7 +18,7 @@ export async function getWishlist(userId) {
     .eq('user_id', userId)
     .order('created_at', { ascending: false });
   if (error) throw ApiError.internal(error.message);
-  return data;
+  return data.map(flattenWishlistItem);
 }
 
 export async function addToWishlist(userId, productId) {
