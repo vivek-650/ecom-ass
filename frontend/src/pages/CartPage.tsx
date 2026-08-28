@@ -8,6 +8,7 @@ import { openRazorpayCheckout } from '@/utils/razorpay';
 import { formatCurrency } from '@/utils/formatCurrency';
 import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { MinusIcon, PlusIcon } from '@/components/ui/Icons';
 import { ApiRequestError } from '@/api/axiosClient';
 
 export function CartPage() {
@@ -98,10 +99,11 @@ export function CartPage() {
                     <button
                       onClick={() => updateQuantity.mutate({ itemId: item.id, quantity: Math.max(1, item.quantity - 1) })}
                       className="grid h-9 w-9 place-items-center text-ink-muted hover:text-ink"
+                      aria-label="Decrease quantity"
                     >
-                      −
+                      <MinusIcon size={13} />
                     </button>
-                    <span className="w-8 text-center font-mono text-sm">{item.quantity}</span>
+                    <span className="w-8 text-center text-sm">{item.quantity}</span>
                     <button
                       onClick={() =>
                         updateQuantity.mutate({
@@ -110,8 +112,9 @@ export function CartPage() {
                         })
                       }
                       className="grid h-9 w-9 place-items-center text-ink-muted hover:text-ink"
+                      aria-label="Increase quantity"
                     >
-                      +
+                      <PlusIcon size={13} />
                     </button>
                   </div>
                   <button

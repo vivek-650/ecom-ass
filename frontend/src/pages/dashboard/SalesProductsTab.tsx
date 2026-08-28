@@ -1,10 +1,11 @@
 import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
-import { useProducts, useProductMutations } from '@/hooks/useProducts';
+import { useMyProducts, useProductMutations } from '@/hooks/useProducts';
 import { formatCurrency } from '@/utils/formatCurrency';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { Input } from '@/components/ui/Input';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { PageSpinner } from '@/components/ui/Spinner';
 import { ProductForm } from '@/components/product/ProductForm';
 import { ApiRequestError } from '@/api/axiosClient';
@@ -15,18 +16,18 @@ import type { ProductPayload } from '@/api/products.api';
 
 const LOW_STOCK_THRESHOLD = 5;
 
-export function AdminProductsTab() {
-  const { data, isLoading } = useProducts({ page: 1, limit: 100 });
+export function SalesProductsTab() {
+  const { data: products, isLoading } = useMyProducts();
   const { create, update, remove } = useProductMutations();
   const [modalState, setModalState] = useState<{ mode: 'create' | 'edit'; product?: Product } | null>(null);
   const [search, setSearch] = useState('');
 
   const filtered = useMemo(() => {
-    const items = data?.items ?? [];
+    const items = products ?? [];
     const q = search.trim().toLowerCase();
     if (!q) return items;
     return items.filter((p) => p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q));
-  }, [data, search]);
+  }, [products, search]);
 
   const handleSubmit = async (payload: ProductPayload) => {
     try {
@@ -35,7 +36,7 @@ export function AdminProductsTab() {
         toast.success('Product updated');
       } else {
         await create.mutateAsync(payload);
-        toast.success('Product created');
+        toast.success('Product listed');
       }
       setModalState(null);
     } catch (err) {
@@ -55,13 +56,32 @@ export function AdminProductsTab() {
 
   if (isLoading) return <PageSpinner />;
 
+  if (!products || products.length === 0) {
+    return (
+      <>
+        <EmptyState
+          title="You haven't listed anything yet"
+          description="Add your first product to start selling on Lumos."
+          action={
+            <Button className="mt-2" onClick={() => setModalState({ mode: 'create' })}>
+              + Add product
+            </Button>
+          }
+        />
+        <Modal isOpen={Boolean(modalState)} onClose={() => setModalState(null)} title="List a new product">
+          <ProductForm onSubmit={handleSubmit} isSubmitting={create.isPending} />
+        </Modal>
+      </>
+    );
+  }
+
   return (
     <div>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div className="relative w-full max-w-sm">
           <SearchIcon size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted" />
           <Input
-            placeholder="Search by name or category…"
+            placeholder="Search your products…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
@@ -71,7 +91,7 @@ export function AdminProductsTab() {
       </div>
 
       <div className="overflow-x-auto rounded-md border border-ink/10 bg-white">
-        <table className="w-full min-w-[720px] text-left text-sm">
+        <table className="w-full min-w-[640px] text-left text-sm">
           <thead>
             <tr className="border-b border-ink/10 text-ink-muted">
               <th className="px-5 py-3 font-medium">Product</th>
@@ -86,7 +106,9 @@ export function AdminProductsTab() {
               <tr key={product.id} className="border-b border-ink/5 last:border-0">
                 <td className="flex items-center gap-3 px-5 py-3">
                   <div className="h-10 w-10 overflow-hidden rounded bg-ink/5">
-                    {product.image_url && <img src={product.image_url} alt="" className="h-full w-full object-cover" />}
+                    {product.image_url && (
+                      <img src={product.image_url} alt="" className="h-full w-full object-cover" />
+                    )}
                   </div>
                   <span className="font-medium text-ink">{product.name}</span>
                 </td>
@@ -133,7 +155,7 @@ export function AdminProductsTab() {
       <Modal
         isOpen={Boolean(modalState)}
         onClose={() => setModalState(null)}
-        title={modalState?.mode === 'edit' ? 'Edit product' : 'Add product'}
+        title={modalState?.mode === 'edit' ? 'Edit product' : 'List a new product'}
       >
         <ProductForm
           initial={modalState?.product}

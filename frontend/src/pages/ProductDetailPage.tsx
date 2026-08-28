@@ -8,6 +8,7 @@ import { formatCurrency } from '@/utils/formatCurrency';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { PageSpinner } from '@/components/ui/Spinner';
+import { HeartIcon, MinusIcon, PlusIcon } from '@/components/ui/Icons';
 
 export function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -63,15 +64,17 @@ export function ProductDetailPage() {
               <button
                 onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                 className="grid h-11 w-11 place-items-center text-ink-muted hover:text-ink"
+                aria-label="Decrease quantity"
               >
-                −
+                <MinusIcon />
               </button>
-              <span className="w-8 text-center font-mono text-sm">{quantity}</span>
+              <span className="w-8 text-center text-sm">{quantity}</span>
               <button
                 onClick={() => setQuantity((q) => Math.min(product.stock, q + 1))}
                 className="grid h-11 w-11 place-items-center text-ink-muted hover:text-ink"
+                aria-label="Increase quantity"
               >
-                +
+                <PlusIcon />
               </button>
             </div>
 
@@ -92,7 +95,7 @@ export function ProductDetailPage() {
                 aria-label="Toggle wishlist"
                 onClick={() => (isWishlisted ? removeWish.mutate(product.id) : addWish.mutate(product.id))}
               >
-                {isWishlisted ? '♥' : '♡'}
+                <HeartIcon filled={isWishlisted} className={isWishlisted ? 'text-ember' : undefined} />
               </Button>
             )}
           </div>

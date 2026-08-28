@@ -12,8 +12,7 @@ import { CartPage } from '@/pages/CartPage';
 import { WishlistPage } from '@/pages/WishlistPage';
 import { OrdersPage } from '@/pages/OrdersPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
-import { SalesProductsPage } from '@/pages/dashboard/SalesProductsPage';
-import { SellerOrdersPage } from '@/pages/dashboard/SellerOrdersPage';
+import { SalesDashboardPage } from '@/pages/dashboard/SalesDashboardPage';
 import { AdminDashboardPage } from '@/pages/dashboard/AdminDashboardPage';
 
 export function AppRoutes() {
@@ -32,8 +31,7 @@ export function AppRoutes() {
           <Route path="orders" element={<OrdersPage />} />
 
           <Route element={<RoleRoute allow={['sales_person', 'admin']} />}>
-            <Route path="dashboard/products" element={<SalesProductsPage />} />
-            <Route path="dashboard/orders" element={<SellerOrdersPage />} />
+            <Route path="dashboard/products" element={<SalesDashboardPage />} />
           </Route>
 
           <Route element={<RoleRoute allow={['admin']} />}>

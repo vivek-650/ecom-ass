@@ -4,6 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useCartMutations } from '@/hooks/useCart';
 import { useIsWishlisted, useWishlistMutations } from '@/hooks/useWishlist';
 import { cn } from '@/utils/cn';
+import { HeartIcon } from '@/components/ui/Icons';
 import type { Product } from '@/types';
 
 export function ProductCard({ product }: { product: Product }) {
@@ -58,9 +59,7 @@ export function ProductCard({ product }: { product: Product }) {
               isWishlisted ? 'text-ember' : 'text-ink-muted hover:text-ink'
             )}
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill={isWishlisted ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
-              <path d="M12 20s-7-4.4-9.5-9C.7 7.2 3 4 6.5 4c2 0 3.5 1.2 4.5 2.7C12 5.2 13.5 4 15.5 4 19 4 21.3 7.2 19.5 11c-2.5 4.6-7.5 9-7.5 9Z" />
-            </svg>
+            <HeartIcon size={14} filled={isWishlisted} />
           </button>
         )}
       </div>

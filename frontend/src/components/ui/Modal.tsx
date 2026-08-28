@@ -1,5 +1,6 @@
 import { useEffect, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
+import { XIcon } from './Icons';
 
 export function Modal({
   isOpen,
@@ -36,7 +37,7 @@ export function Modal({
             aria-label="Close"
             className="grid h-8 w-8 place-items-center rounded-full text-ink-muted transition-colors hover:bg-ink/5 hover:text-ink"
           >
-            ✕
+            <XIcon />
           </button>
         </div>
         {children}
