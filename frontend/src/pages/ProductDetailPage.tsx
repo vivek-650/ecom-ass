@@ -97,6 +97,7 @@ export function ProductDetailPage() {
                 variant="secondary"
                 className="order-2 sm:order-3"
                 aria-label="Toggle wishlist"
+                disabled={addWish.isPending || removeWish.isPending}
                 onClick={() => (isWishlisted ? removeWish.mutate(product.id) : addWish.mutate(product.id))}
               >
                 <HeartIcon filled={isWishlisted} className={isWishlisted ? 'text-ember' : undefined} />

@@ -47,7 +47,12 @@ export function WishlistPage() {
               <p className="price text-sm text-ink-muted">{formatCurrency(item.product.price)}</p>
             </Link>
             <div className="mt-3 flex gap-2">
-              <Button size="sm" className="flex-1" onClick={() => addItem.mutate({ productId: item.product.id })}>
+              <Button
+                size="sm"
+                className="flex-1"
+                isLoading={addItem.isPending}
+                onClick={() => addItem.mutate({ productId: item.product.id })}
+              >
                 Add to cart
               </Button>
               <Button size="sm" variant="danger" onClick={() => removeItem.mutate(item.product.id)}>

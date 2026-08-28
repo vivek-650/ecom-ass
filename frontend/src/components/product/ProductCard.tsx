@@ -14,9 +14,13 @@ export function ProductCard({ product }: { product: Product }) {
   const isWishlisted = useIsWishlisted(product.id);
   const outOfStock = product.stock <= 0;
 
+  const wishlistPending = addWish.isPending || removeWish.isPending;
+
   const toggleWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (!token) return;
+    // Ignore a second tap while the first is still in flight, rather than
+    // firing add-then-remove (or vice versa) back to back.
+    if (!token || wishlistPending) return;
     if (isWishlisted) removeWish.mutate(product.id);
     else addWish.mutate(product.id);
   };
@@ -53,6 +57,7 @@ export function ProductCard({ product }: { product: Product }) {
         {token && (
           <button
             onClick={toggleWishlist}
+            disabled={wishlistPending}
             aria-label="Toggle wishlist"
             className={cn(
               'absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-white/95 shadow-card transition-colors',

@@ -13,7 +13,7 @@ import { ApiRequestError } from '@/api/axiosClient';
 
 export function CartPage() {
   const { data: items, isLoading } = useCart();
-  const { updateQuantity, removeItem } = useCartMutations();
+  const { removeItem, setQuantity } = useCartMutations();
   const total = useCartTotal();
   const { profile } = useAuth();
   const { createRazorpayOrder, verifyPayment } = useCheckout();
@@ -100,7 +100,7 @@ export function CartPage() {
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center rounded-md border border-ink/15">
                     <button
-                      onClick={() => updateQuantity.mutate({ itemId: item.id, quantity: Math.max(1, item.quantity - 1) })}
+                      onClick={() => setQuantity(item.id, Math.max(1, item.quantity - 1))}
                       className="grid h-8 w-8 place-items-center text-ink-muted hover:text-ink sm:h-9 sm:w-9"
                       aria-label="Decrease quantity"
                     >
@@ -108,12 +108,7 @@ export function CartPage() {
                     </button>
                     <span className="w-7 text-center text-sm sm:w-8">{item.quantity}</span>
                     <button
-                      onClick={() =>
-                        updateQuantity.mutate({
-                          itemId: item.id,
-                          quantity: Math.min(item.product.stock, item.quantity + 1),
-                        })
-                      }
+                      onClick={() => setQuantity(item.id, Math.min(item.product.stock, item.quantity + 1))}
                       className="grid h-8 w-8 place-items-center text-ink-muted hover:text-ink sm:h-9 sm:w-9"
                       aria-label="Increase quantity"
                     >
