@@ -9,23 +9,29 @@ export interface SignUpPayload {
   role: Extract<Role, 'user' | 'sales_person'>;
 }
 
+interface LoginResponse {
+  user: { id: string; email: string };
+  session: { access_token: string; refresh_token: string; expires_at: number };
+}
+
 /**
- * Registration and login are delegated to Supabase Auth (bcrypt-grade hashing
- * and signed sessions come for free); the backend is only consulted afterwards
- * to read back the role-bearing profile row.
+ * Registration and login are proxied through our own Express backend
+ * (`/auth/register`, `/auth/login`) rather than calling Supabase directly
+ * from the browser — see backend/src/modules/auth/auth.service.js for why.
+ * Login hands back raw Supabase tokens, which we hydrate into this tab's
+ * Supabase client via `setSession` so the rest of the app (axiosClient's
+ * interceptor, AuthContext) keeps working exactly as if supabase-js had
+ * signed in directly.
  */
 export const authApi = {
-  signUp: async ({ email, password, fullName, role }: SignUpPayload) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: { full_name: fullName, role } },
-    });
-    if (error) throw error;
-  },
+  signUp: (payload: SignUpPayload) => unwrap<{ id: string; email: string }>(axiosClient.post('/auth/register', payload)),
 
   signIn: async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { session } = await unwrap<LoginResponse>(axiosClient.post('/auth/login', { email, password }));
+    const { error } = await supabase.auth.setSession({
+      access_token: session.access_token,
+      refresh_token: session.refresh_token,
+    });
     if (error) throw error;
   },
 
