@@ -1,3 +1,29 @@
+/* Self-hosted Inter -- no Google Fonts CDN request, no FOUT/layout shift on
+   a slow connection, works offline. Only the three weights we actually
+   ship: 700 covers every "bold" use in the UI, so nothing falls back to a
+   browser-synthesized (faux) bold. */
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
