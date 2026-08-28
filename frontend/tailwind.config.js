@@ -15,9 +15,9 @@ export default {
         },
         // Brand yellow -- highlights, promo surfaces, the account pill.
         gold: {
-          DEFAULT: '#FFC300',
-          deep: '#E0A800',
-          pale: '#FFF3CC',
+          DEFAULT: '#FFC900',
+          deep: '#E8A800',
+          pale: '#FFF8E1',
         },
         // Brand green -- primary CTA ("ADD"), success states.
         forest: {

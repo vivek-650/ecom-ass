@@ -36,7 +36,7 @@ export function ProductDetailPage() {
   return (
     <div className="container-lumos py-12">
       <div className="grid gap-12 lg:grid-cols-2">
-        <div className="relative aspect-square overflow-hidden rounded-2xl bg-paper-dim">
+        <div className="relative aspect-square overflow-hidden rounded-2xl bg-ink/5">
           <div className="absolute inset-0 bg-radial-glow" />
           {product.image_url ? (
             <img src={product.image_url} alt={product.name} className="h-full w-full object-cover" />

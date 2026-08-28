@@ -31,7 +31,7 @@ export function ProductCard({ product }: { product: Product }) {
       to={`/products/${product.id}`}
       className="group block overflow-hidden rounded-md border border-ink/10 bg-white transition-shadow hover:shadow-card-hover"
     >
-      <div className="relative aspect-square bg-paper-dim">
+      <div className="relative aspect-square bg-ink/5">
         {product.image_url ? (
           <img
             src={product.image_url}

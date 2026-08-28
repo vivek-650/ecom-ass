@@ -41,7 +41,7 @@ export function ProductForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="flex items-center gap-4">
-        <div className="h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-paper-dim">
+        <div className="h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-ink/5">
           {preview ? (
             <img src={preview} alt="Preview" className="h-full w-full object-cover" />
           ) : (
