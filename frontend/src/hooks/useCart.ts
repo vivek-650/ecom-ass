@@ -20,7 +20,13 @@ export function useCart() {
 export function useCartMutations() {
   const queryClient = useQueryClient();
   const setCart = (data: CartItem[]) => queryClient.setQueryData(CART_KEY, data);
-  const onError = (error: unknown) => {
+
+  const rollbackOnError = (
+    error: unknown,
+    _vars: unknown,
+    context?: { previousCart?: CartItem[] }
+  ) => {
+    if (context?.previousCart) setCart(context.previousCart);
     toast.error(error instanceof ApiRequestError ? error.message : 'Something went wrong');
   };
 
@@ -31,23 +37,42 @@ export function useCartMutations() {
       setCart(data);
       toast.success('Added to cart');
     },
-    onError,
+    onError: rollbackOnError,
   });
 
+  // Quantity +/- needs to feel instant (it's clicked repeatedly) — update the
+  // cache immediately, fire the request in the background, and only roll
+  // back if it actually fails. The server response still lands in onSuccess
+  // as the source of truth (e.g. if stock changed server-side), but the
+  // click itself never waits on the network.
   const updateQuantity = useMutation({
     mutationFn: ({ itemId, quantity }: { itemId: string; quantity: number }) =>
       cartApi.updateQuantity(itemId, quantity),
+    onMutate: async ({ itemId, quantity }) => {
+      await queryClient.cancelQueries({ queryKey: CART_KEY });
+      const previousCart = queryClient.getQueryData<CartItem[]>(CART_KEY);
+      queryClient.setQueryData<CartItem[]>(CART_KEY, (old) =>
+        (old ?? []).map((item) => (item.id === itemId ? { ...item, quantity } : item))
+      );
+      return { previousCart };
+    },
     onSuccess: setCart,
-    onError,
+    onError: rollbackOnError,
   });
 
   const removeItem = useMutation({
     mutationFn: (itemId: string) => cartApi.remove(itemId),
+    onMutate: async (itemId) => {
+      await queryClient.cancelQueries({ queryKey: CART_KEY });
+      const previousCart = queryClient.getQueryData<CartItem[]>(CART_KEY);
+      queryClient.setQueryData<CartItem[]>(CART_KEY, (old) => (old ?? []).filter((item) => item.id !== itemId));
+      return { previousCart };
+    },
     onSuccess: (data) => {
       setCart(data);
       toast.success('Removed from cart');
     },
-    onError,
+    onError: rollbackOnError,
   });
 
   return { addItem, updateQuantity, removeItem };
