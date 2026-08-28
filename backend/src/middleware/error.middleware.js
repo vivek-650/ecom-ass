@@ -11,8 +11,14 @@ export const errorHandler = (err, req, res, _next) => {
   const statusCode = isApiError ? err.statusCode : 500;
   const message = isApiError ? err.message : 'Internal server error';
 
-  if (!isApiError) {
-    console.error('[Unhandled Error]', err);
+  // Expected 4xx (bad input, forbidden, not found) log at warn; anything
+  // unexpected — a 500 or a bug that never went through ApiError — logs the
+  // full stack at error so it surfaces in alerting instead of getting lost.
+  const log = req.log ?? console;
+  if (!isApiError || statusCode >= 500) {
+    log.error({ err, statusCode }, message);
+  } else {
+    log.warn({ statusCode }, message);
   }
 
   res.status(statusCode).json({
